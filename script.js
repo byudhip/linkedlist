@@ -2,8 +2,8 @@
 
 // Node class representing an element in the linked list
 class Node {
-  constructor(data) {
-    this.data = data;
+  constructor(key, value) {
+    (this.key = key), (this.value = value);
     this.next = null;
   }
 }
@@ -16,8 +16,8 @@ class LinkedList {
     this.SIZE = 0; // Number of nodes in the list
   }
   // Add node to the end of the list
-  append(data) {
-    let newNode = new Node(data);
+  append(key, value) {
+    let newNode = new Node(key, value);
     if (!this.HEAD) {
       // If list is empty, HEAD and TAIL both point to new node
       this.HEAD = newNode;
@@ -31,8 +31,8 @@ class LinkedList {
     return this;
   }
   // Add node to the start of the list
-  prepend(data) {
-    let newNode = new Node(data);
+  prepend(key, value) {
+    let newNode = new Node(key, value);
     if (!this.HEAD) {
       // If list is empty, HEAD and TAIL both point to new node
       this.HEAD = newNode;
@@ -71,6 +71,16 @@ class LinkedList {
     }
     return null;
   }
+
+  valueOf(key) {
+    let node = this.HEAD;
+    while (node) {
+      if (node.key === key) return node.value;
+      node = node.next;
+    }
+    return null;
+  }
+
   // Remove and return the last node in the list
   pop() {
     if (!this.HEAD) return null;
@@ -89,51 +99,76 @@ class LinkedList {
     return removed;
   }
   // Check if a value exists in the list
-  contains(data) {
+  contains(value) {
     let node = this.HEAD;
     while (node) {
-      if (node.data === data) return true;
+      if (node.value === value) return true;
       node = node.next;
     }
     return false;
   }
   // Find index of the node with specified value
-  find(data) {
+  find(value) {
     let node = this.HEAD;
     let count = 0;
     while (node) {
-      if (node.data === data) {
-        return `"${data}" found at index ${count}`;
+      if (node.value === value) {
+        return count;
       }
       node = node.next;
       count++;
     }
-    return "data not found";
+    return null;
   }
+  findKey(key) {
+    let node = this.HEAD;
+    let count = 0;
+    while (node) {
+      if (node.key === key) {
+        return count;
+      }
+      node = node.next;
+      count++;
+    }
+    return null;
+  }
+  addOrUpdate(key, value) {
+    let node = this.HEAD;
+    while (node) {
+      if (node.key === key) {
+        node.value = value;
+        return "update";
+      }
+      node = node.next;
+    }
+    this.append(key, value);
+    return "add";
+  }
+
   // Return string representation of the list
   toStr() {
     let node = this.HEAD;
-    let dataStr = "";
+    let valueStr = "";
     while (node) {
-      dataStr += `( ${node.data} ) -> `;
+      valueStr += `( ${node.value} ) -> `;
       node = node.next;
     }
-    return (dataStr += "null");
+    return (valueStr += "null");
   }
-  // Insert node with data at specified index
-  insertAt(data, index) {
+  // Insert node with value at specified index
+  insertAt(key, value, index) {
     let nodeShiftedRight = this.at(index);
-    let newNode = new Node(data);
+    let newNode = new Node(key, value);
     if (index < 0) return this;
     if (index > this.SIZE) return `Out of list bounds`;
     if (index === 0) {
       // Insert at the beginning
-      this.prepend(data);
+      this.prepend(value);
       return this;
     }
     if (index === this.SIZE) {
       // Insert at the end
-      this.append(data);
+      this.append(value);
       return this;
     }
     // Insert in the middle
@@ -160,29 +195,45 @@ class LinkedList {
     this.SIZE--;
     return this;
   }
+  getKeyCount() {
+    let count = 0;
+    let current = this.HEAD;
+    while (current) {
+      count++;
+      current = current.next;
+    }
+    return count;
+  }
+
+  allKeys() {
+    let current = this.HEAD;
+    let arr = [];
+    while (current) {
+      arr.push(current.key);
+      current = current.next;
+    }
+    return arr;
+  }
+
+  allValues() {
+    let current = this.HEAD;
+    let arr = [];
+    while (current) {
+      arr.push(current.value);
+      current = current.next;
+    }
+    return arr;
+  }
+
+  pairs() {
+    let current = this.HEAD;
+    let arr = [];
+    while (current) {
+      arr.push([current.key, current.value]);
+      current = current.next;
+    }
+    return arr;
+  }
 }
 
-const list = new LinkedList();
-
-list.append("dog");
-list.append("cat");
-list.append("parrot");
-list.append("hamster");
-list.append("snake");
-list.append("turtle");
-
-console.log("this is the linked list:\n", list);
-console.log(list.toStr());
-// console.log("this is list size:\n", list.size());
-// console.log("this is list head:\n", list.head());
-// console.log("this is list tail\n", list.tail());
-// console.log("this is what list contains at index 2\n", list.at(2));
-// console.log('does this list contains "cat"?\n', list.contains("cat"));
-// console.log("where is 'giraffe'?\n", list.find("giraffe"));
-// console.log("all list elements\n", list.toStr());
-// console.log(`insert 'elephant' at index 4\n`, list.insertAt("elephant", 6));
-// console.log("all list elements after elephant inserted\n", list.toStr());
-// console.log("where is 'elephant'?\n", list.find("elephant"));
-// console.log("Remove last element of list\n", list.pop());
-// console.log(list.removeAt(0));
-// console.log(list.toStr());
+export { Node, LinkedList };
